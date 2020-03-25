@@ -1,5 +1,4 @@
-## EEC281 - VLSI Digital Signal Processing, Winter 2020
-## Introduction
+# EEC281 - VLSI Digital Signal Processing, Winter 2020
 Here lies all the projects done for this course. Description of the project prompt can be found in each folder. 
 
 + For course information, please refer to [the course webpage](https://www.ece.ucdavis.edu/~bbaas/281/) or [our department's webpage](https://ece.ucdavis.edu/schedules-classes).
