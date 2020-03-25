@@ -1,0 +1,194 @@
+module prob3_tb;
+
+// in/out for the DUT
+reg clk, ci;
+reg [15:0] inA, inB;
+wire [15:0] out;
+wire co;
+
+prob3 DUT (.clk(clk), .inA(inA), .inB(inB), .ci(ci), .co(co), .out(out));
+
+// clock period: #100
+reg clk_rst;
+
+always begin
+   if (clk_rst == 1'b1)
+      clk = #1 1'b0;
+   else
+      #50 clk = ~clk;
+end
+
+// reference circuit
+reg skew; // skew bit
+wire [16:0] sum_g = inA + inB + ci + skew;
+wire co_g = sum_g[16];
+wire [15:0] out_g = sum_g[15:0];
+
+// Start Testing
+initial begin
+	$recordfile("prob3_tb");
+	$recordvars(prob3_tb);
+	
+	$display("Reset");
+	clk_rst = 1'b1;
+	inA = 16'h0000; inB = 16'h0000; ci = 1'b0; skew = 1'b0;
+	#200; // wait for two cycles
+	clk_rst = 1'b0;
+	
+	$display("Start Testing");
+	
+	// Test 1: 0 + 0 + 0
+	@(posedge clk) #10;
+	inA = 16'h0000; inB = 16'h0000; ci = 1'b0;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 2: 1 + 0 + 0
+	@(posedge clk) #10;
+	inA = 16'h0001; inB = 16'h0000; ci = 1'b0;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 3: 0 + 1 + 0
+	@(posedge clk) #10;
+	inA = 16'h0000; inB = 16'h0001; ci = 1'b0;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 4: 0 + 0 + 1
+	@(posedge clk) #10;
+	inA = 16'h0000; inB = 16'h0000; ci = 1'b1;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 5: 1 + 1 + 0
+	@(posedge clk) #10;
+	inA = 16'h0001; inB = 16'h0001; ci = 1'b0;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 6: 1 + 1 + 1
+	@(posedge clk) #10;
+	inA = 16'h0001; inB = 16'h0001; ci = 1'b1;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 7: 65535 + 65535 + 0
+	@(posedge clk) #10;
+	inA = 16'hffff; inB = 16'hffff; ci = 1'b0;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 8: 65535 + 65535 + 1
+	@(posedge clk) #10;
+	inA = 16'hffff; inB = 16'hffff; ci = 1'b1;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 9: 43690 + 21845 + 0
+	@(posedge clk) #10;
+	inA = 16'haaaa; inB = 16'h5555; ci = 1'b0;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 10: 43690 + 21845 + 1
+	@(posedge clk) #10;
+	inA = 16'haaaa; inB = 16'h5555; ci = 1'b1;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 11: 65280 + 255 + 0
+	@(posedge clk) #10;
+	inA = 16'hff00; inB = 16'h00ff; ci = 1'b0;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 12: 65280 + 255 + 1
+	@(posedge clk) #10;
+	inA = 16'hff00; inB = 16'h00ff; ci = 1'b1;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 13: 65535 + 0 + 1
+	@(posedge clk) #10;
+	inA = 16'hffff; inB = 16'h0000; ci = 1'b1;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 14: 0 + 65535 + 1
+	@(posedge clk) #10;
+	inA = 16'h0000; inB = 16'hffff; ci = 1'b1;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 15: 1 + 1 + 1 but SKEWED
+	@(posedge clk) #10;
+	inA = 16'h0001; inB = 16'h0001; ci = 1'b1; skew = 1'b1;
+	repeat (2) @(posedge clk); #10 // wait for two cycles
+	$write("inA=%d, inB=%d, ci=%b, co=%b, out=%d, co_g=%b, out_g=%d ", inA, inB, ci, co, out, co_g, out_g);
+	if ((co == co_g) && (out == out_g))
+		$write("ok\n");
+	else
+		$write("Error! but forced\n");
+	
+	$display("All tests ended.");
+	$finish;
+end
+
+endmodule

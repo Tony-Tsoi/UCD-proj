@@ -1,0 +1,45 @@
+module prob5_tb;
+
+	wire a, b, c, d, e;
+	wire c0, c1, s;
+	
+	reg [4:0] num;
+	assign a = num[4];
+	assign b = num[3];
+	assign c = num[2];
+	assign d = num[1];
+	assign e = num[0];
+	
+	wire [2:0] total;
+	assign total = 2*c0 + 2*c1 + s;
+	
+	wire [2:0] total_g;
+	assign total_g = a + b + c + d + e;
+	
+	prob5 T (.a(a), .b(b), .c(c), .d(d), .e(e), .c0(c0), .c1(c1), .s(s));
+	
+	initial begin
+		// Create dump file
+		$recordfile("prob5_tb");
+		$recordvars(prob5_tb);
+		
+		$display("----- Start Testing -----");
+		
+		// initialize num
+		num = 5'h00;
+
+		// Test Case 1 to 32: Run all cases 0 + 0 + 0 + 0 + 0 to 1 + 1 + 1 + 1 + 1
+		repeat (32) begin
+			#10
+			$write("a=%b, b=%b, c=%b, d=%b, e=%b, total=%d, total_g=%d ", a, b, c, d, e, total, total_g);
+			if (total == total_g)
+				$write("ok\n");
+			else
+				$write("Error!\n");
+			num = num + 5'h01;
+		end
+		
+		$display("----- All tests ended -----");
+		$finish;
+	end
+endmodule

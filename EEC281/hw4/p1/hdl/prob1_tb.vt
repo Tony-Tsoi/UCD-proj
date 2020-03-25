@@ -1,0 +1,429 @@
+module prob1_tb;
+
+// Parameters
+parameter NCIO = 3; // Number of Cycles from Input to Output
+parameter NRC = 1000; // Number of Random Cases to be generated
+
+// I/O for DUT
+reg clk;
+reg signed [15:0] a_r, a_i, b_r, b_i, w_r, w_i;
+wire signed [15:0] x_r, x_i;
+
+prob1 DUT (.clk(clk), .a_r(a_r), .a_i(a_i), .b_r(b_r), .b_i(b_i), 
+	.w_r(w_r), .w_i(w_i), .x_r(x_r), .x_i(x_i) );
+
+// clock period: #100
+reg clk_rst;
+always begin
+   if (clk_rst == 1'b1)
+      clk = #1 1'b0;
+   else
+      #50 clk = ~clk;
+end
+
+// For testing
+reg [15:0] xr_g, xi_g;
+reg [31:0] a, b, w;
+integer count, tboutf;
+
+// Start Testing
+initial begin
+	// For Cadence tool
+	$recordfile("prob1_tb");
+	$recordvars(prob1_tb);
+	
+	// File for writing the 1000 test cases inputs and outputs
+	tboutf = $fopen("prob1out.m", "w");
+	
+	// Get three random number seeds for the three inputs
+	a = 32'd0000000123; b = 32'd0000000456; w = 32'd0000000789;
+	
+	$display("Initializing");
+	clk_rst = 1'b1;
+	#200; // wait for two cycles
+	clk_rst = 1'b0;
+	
+	// Part 1: Hand-picked extreme test cases
+	$display("Start testing hand-picked test cases");
+	
+	// Test 1: All zeros
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h0000; b_i = 16'h0000;
+	w_r = 16'h0000; w_i = 16'h0000; xr_g = 16'h0000; xi_g = 16'h0000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 2: 2^-14 + 0 -> trunc to 0
+	@(posedge clk) #10;
+	a_r = 16'h0001; a_i = 16'h0000; b_r = 16'h0000; b_i = 16'h0000;
+	w_r = 16'h0000; w_i = 16'h0000; xr_g = 16'h0000; xi_g = 16'h0000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 3: j*2^-12 + 0
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0004; b_r = 16'h0000; b_i = 16'h0000;
+	w_r = 16'h0000; w_i = 16'h0000; xr_g = 16'h0000; xi_g = 16'h0001;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+		
+	// Test 4: 0 + 2^-12 * 0
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h0004; b_i = 16'h0000;
+	w_r = 16'h0000; w_i = 16'h0000; xr_g = 16'h0000; xi_g = 16'h0000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+		
+	// Test 5: 0 + j2^-12 * 0
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h0000; b_i = 16'h4000;
+	w_r = 16'h0000; w_i = 16'h0000; xr_g = 16'h0000; xi_g = 16'h0000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");	
+		
+	// Test 6: 0 + 0 * 2^-12
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h0000; b_i = 16'h0000;
+	w_r = 16'h4000; w_i = 16'h0000; xr_g = 16'h0000; xi_g = 16'h0000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");	
+		
+	// Test 7: 0 + 0 * j2^-12
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h0000; b_i = 16'h0000;
+	w_r = 16'h0000; w_i = 16'h4000; xr_g = 16'h0000; xi_g = 16'h0000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");	
+		
+	// Test 8: 0 + (2^-12)(1 + j)
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h0004; b_i = 16'h0000;
+	w_r = 16'h4000; w_i = 16'h4000; xr_g = 16'h0001; xi_g = 16'h0001;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+		
+	// Test 9: 0 + (j2^-12)(1 + j)
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h0000; b_i = 16'h0004;
+	w_r = 16'h4000; w_i = 16'h4000; xr_g = 16'hffff; xi_g = 16'h0001;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+		
+	// Test 10: 0 + (1 - j)(2-2^-12 + j2) - j2^-12
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h0004; b_i = 16'h0004;
+	w_r = 16'h4000; w_i = 16'h4000; xr_g = 16'h0000; xi_g = 16'h0002;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");	
+		
+	// Test 11: j*2^-12 + (1 - j)(2-2^-12 + j2 - j2^-12)
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0004; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'h7fff; w_i = 16'h7fff; xr_g = 16'h4000; xi_g = 16'h0001;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");	
+		
+	// Test 12: 2^-12 + j*2^-12 + (1 - j)(1 + j)
+	@(posedge clk) #10;
+	a_r = 16'h0004; a_i = 16'h0004; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'h4000; w_i = 16'h4000; xr_g = 16'h2001; xi_g = 16'h0001;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");		
+		
+	// Test 13: 1 + j + (1 - j)(1 + j)
+	@(posedge clk) #10;
+	a_r = 16'h4000; a_i = 16'h4000; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'h4000; w_i = 16'h4000; xr_g = 16'h3000; xi_g = 16'h1000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");	
+
+	// Test 14: -2 -j2 + (1 - j)(1 + j)
+	@(posedge clk) #10;
+	a_r = 16'h8000; a_i = 16'h8000; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'h4000; w_i = 16'h4000; xr_g = 16'h0000; xi_g = 16'he000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");	
+
+	// Test 15: 2-2^-12 + j2 - j2^-12 + (1 - j)(1 + j)
+	@(posedge clk) #10;
+	a_r = 16'h7fff; a_i = 16'h7fff; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'h4000; w_i = 16'h4000; xr_g = 16'h4000; xi_g = 16'h2000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");	
+		
+	// Test 16: -2 -j2 + (2^-12)(1 + j) -> -2 + 2^-12 + j*(-2 + 2^-12)
+	@(posedge clk) #10;
+	a_r = 16'h8000; a_i = 16'h8000; b_r = 16'h0004; b_i = 16'h0000;
+	w_r = 16'h4000; w_i = 16'h4000; xr_g = 16'he001; xi_g = 16'he001;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 17: -2 -j2 + (-2 -j2)(-1 - j1)
+	@(posedge clk) #10;
+	a_r = 16'h8000; a_i = 16'h8000; b_r = 16'h8000; b_i = 16'h8000;
+	w_r = 16'hc000; w_i = 16'hc000; xr_g = 16'he000; xi_g = 16'h2000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+		
+	// Test 18: -2 -j2 + (-2 -j2)(1 + j1)
+	@(posedge clk) #10;
+	a_r = 16'h8000; a_i = 16'h8000; b_r = 16'h8000; b_i = 16'h8000;
+	w_r = 16'h4000; w_i = 16'h4000; xr_g = 16'he000; xi_g = 16'ha000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+		
+	// Test 19: -2 -j2 + (0 - j)(0 + j(2-2^-14))
+	@(posedge clk) #10;
+	a_r = 16'h8000; a_i = 16'h8000; b_r = 16'h0000; b_i = 16'hc000;
+	w_r = 16'h0000; w_i = 16'h7fff; xr_g = 16'h0000; xi_g = 16'he000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 20: 2^-12 +j2^-12 + (0 - j2)(1 + j(2-2^-14))
+	@(posedge clk) #10;
+	a_r = 16'h0004; a_i = 16'h0004; b_r = 16'h0000; b_i = 16'h8000;
+	w_r = 16'h4000; w_i = 16'h7fff; xr_g = 16'h4001; xi_g = 16'he001;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 21: 0 +j2^-12 + (1 - j)(2-2^-14 + j(2-2^-14))
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0004; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'h7fff; w_i = 16'h7fff; xr_g = 16'h4000; xi_g = 16'h0001;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+		
+	// Test 22: 0 + (1 - j) * 1*angle(0)
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'h4000; w_i = 16'h0000; xr_g = 16'h1000; xi_g = 16'hf000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+
+	// Test 23: 0 + (1 - j) * 1*angle(-45)
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'h2d41; w_i = 16'hd2be; xr_g = 16'h0000; xi_g = 16'he95f;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+
+	// Test 24: 0 + (1 - j) * 1*angle(-90)
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'h0000; w_i = 16'hc000; xr_g = 16'hf000; xi_g = 16'hf000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+
+	// Test 25: 0 + (1 - j) * 1*angle(-135)
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'hd2be; w_i = 16'hd2be; xr_g = 16'he95f; xi_g = 16'h0000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+		
+	// Test 26: 0 + (1 - j) * 1*angle(-180)
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'hc000; w_i = 16'hffff; xr_g = 16'hf000; xi_g = 16'h1000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+		
+	// Test 27: 0 + (1 - j) * 1*angle(-225)
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'hd2be; w_i = 16'h2d41; xr_g = 16'h0000; xi_g = 16'h16a1;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+	
+	// Test 28: 0 + (1 - j) * 1*angle(-270)
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'hffff; w_i = 16'h4000; xr_g = 16'h1000; xi_g = 16'h1000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");
+		
+	// Test 29: 0 + (1 - j) * 1*angle(-315)
+	@(posedge clk) #10;
+	a_r = 16'h0000; a_i = 16'h0000; b_r = 16'h4000; b_i = 16'hc000;
+	w_r = 16'h2d41; w_i = 16'h2d41; xr_g = 16'h16a1; xi_g = 16'h0000;
+	repeat (NCIO) @(posedge clk); #10 // wait for output
+	$write("I: a_r=%h, a_i=%h, b_r=%h, b_i=%h, w_r=%h, w_i=%h\n", a_r, a_i, b_r, b_i, w_r, w_i);
+	$write("O: x_r=%h, x_i=%h, xr_g=%h, xi_g=%h\nS: ", x_r, x_i, xr_g, xi_g);
+	if ((x_r == xr_g) && (x_i == xi_g))
+		$write("ok\n");
+	else
+		$write("Error!\n");		
+	
+	$write("All hand-picked tests ended\n");
+	
+	// Part 2: 1000 Random Tests
+	$write("Generating 1000 Random Test Cases\n");
+	
+	for (count = 1; count <= NRC; count = count + 1) begin
+		// Get random number and set inputs for DUT
+		a = $random(a); b = $random(b); w = $random(w);
+		a_r = a[31:16]; a_i = a[15:0];
+		b_r = b[31:16]; b_i = b[15:0];
+		w_r = w[31:16]; w_i = w[15:0];
+
+		// Wait for output to be ready
+		repeat(NCIO) @(posedge clk); 
+
+		// Write the inputs and outputs to file
+		$fwrite(tboutf, "a_r(%d) = %d; ", count, a_r);
+		$fwrite(tboutf, "a_i(%d) = %d; ", count, a_i);
+		$fwrite(tboutf, "b_r(%d) = %d; ", count, b_r);
+		$fwrite(tboutf, "b_i(%d) = %d; ", count, b_i);
+		$fwrite(tboutf, "w_r(%d) = %d; ", count, w_r);
+		$fwrite(tboutf, "w_i(%d) = %d; ", count, w_i);
+		$fwrite(tboutf, "x_r(%d) = %d; ", count, x_r);
+		$fwrite(tboutf, "x_i(%d) = %d; ", count, x_i);
+		$fwrite(tboutf, "\n");
+	end
+	
+	$display("All tests and output generated");
+	
+	$finish;
+end
+
+endmodule

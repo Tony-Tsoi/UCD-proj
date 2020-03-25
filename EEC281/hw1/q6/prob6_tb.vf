@@ -1,0 +1,5 @@
+test/prob6_tb.vt
+hdl/prob6.v
+hdl/adder4to2.v
+hdl/csa6.v
+hdl/fa.v
