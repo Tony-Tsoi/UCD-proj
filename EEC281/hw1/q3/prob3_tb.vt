@@ -1,0 +1,143 @@
+module prob3_tb;
+	reg [8:0] fixnum;
+	wire [8:0] flonum;
+	
+	wire [8:0] flonum_g;
+	reg [3:0] exp_g;
+	reg [4:0] mant_g;
+	
+	assign flonum_g = {exp_g, mant_g};
+	
+	prob3 T (.fixnum(fixnum), .flonum(flonum));
+	
+	initial begin
+		// Create dump file
+		$recordfile("prob3_tb");
+		$recordvars(prob3_tb);
+		
+		$display("----- Start Testing -----");
+		
+		// Test Case 1: fixnum = 0
+		fixnum = 9'h000; exp_g = 4'h0; mant_g = 5'h00; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 2: fixnum = 1/4
+		fixnum = 9'h001; exp_g = 4'hb; mant_g = 5'h08; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 3: fixnum = -1/4
+		fixnum = 9'h1ff; exp_g = 4'h9; mant_g = 5'h10; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 4: fixnum = 1
+		fixnum = 9'h004; exp_g = 4'hd; mant_g = 5'h08; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 5: fixnum = -1
+		fixnum = 9'h1fc; exp_g = 4'hc; mant_g = 5'h10; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 6: fixnum = 10
+		fixnum = 9'h028; exp_g = 4'h0; mant_g = 5'h0a; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 7: fixnum = -10
+		fixnum = 9'h1d8; exp_g = 4'h0; mant_g = 5'h16; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 8: fixnum = -9.75
+		fixnum = 9'h1d9; exp_g = 4'h0; mant_g = 5'h16; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 9: fixnum = 52
+		fixnum = 9'h0d0; exp_g = 4'h2; mant_g = 5'h0d; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 10: fixnum = 1.75
+		fixnum = 9'h007; exp_g = 4'hd; mant_g = 5'h0e; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 11: fixnum = -1.75
+		fixnum = 9'h1f9; exp_g = 4'hd; mant_g = 5'h12; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 12: fixnum = 3.75
+		fixnum = 9'h00f; exp_g = 4'he; mant_g = 5'h0f; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 13: fixnum = -3.5
+		fixnum = 9'h1e2; exp_g = 4'hf; mant_g = 5'h11; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 14: fixnum = 0.5
+		fixnum = 9'h002; exp_g = 4'hc; mant_g = 5'h08; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 15: fixnum = -18
+		fixnum = 9'h1b8; exp_g = 4'h1; mant_g = 5'h17; #10
+		$write("fixnum=%h, flonum=%h, flonum_g=%h ",fixnum, flonum, flonum_g);
+		if (flonum == flonum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		$display("----- All tests ended -----");
+		$finish;
+	end
+endmodule

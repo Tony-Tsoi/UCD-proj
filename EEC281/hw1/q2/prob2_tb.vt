@@ -1,0 +1,143 @@
+module prob2_tb;
+	wire [10:0] flonum;
+	wire [14:0] fixnum;
+	
+	reg [2:0] exp;
+	reg [7:0] mant;
+	reg [14:0] fixnum_g;
+	
+	assign flonum = {exp, mant};
+	
+	prob2 T (.flonum(flonum), .fixnum(fixnum));
+	
+	initial begin
+		// Create dump file
+		$recordfile("prob2_tb");
+		$recordvars(prob2_tb);
+		
+		$display("----- Start Testing -----");
+		
+		// Test Case 1: exp = 0, mant = 0
+		exp = 3'h0; mant = 8'h00; fixnum_g = 15'h0000; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 2: exp = 0, mant = 1/4
+		exp = 3'h0; mant = 8'h01; fixnum_g = 15'h0001; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 3: exp = 1, mant = 1/4
+		exp = 3'h1; mant = 8'h01; fixnum_g = 15'h0002; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 4: exp = 7, mant = 1/4
+		exp = 3'b111; mant = 8'h01; fixnum_g = 15'h0080; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 5: exp = 7, mant = 31.75
+		exp = 3'h7; mant = 8'h7f; fixnum_g = 15'h3f80; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 6: exp = 0, mant = 31.75
+		exp = 3'h0; mant = 8'h7f; fixnum_g = 15'h007f; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 7: exp = 3, mant = 31.75
+		exp = 3'h3; mant = 8'h7f; fixnum_g = 15'h03f8; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 8: exp = 7, mant = -32
+		exp = 3'h7; mant = 8'h80; fixnum_g = 15'h4000; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 9: exp = 7, mant = -1/4
+		exp = 3'h7; mant = 8'hff; fixnum_g = 15'h7f80; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 10: exp = 7, mant = 1/4
+		exp = 3'h7; mant = 8'h01; fixnum_g = 15'h0080; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 11: exp = 7, mant = -1/4
+		exp = 3'h7; mant = 8'h80; fixnum_g = 15'h4000; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 12: exp = 1, mant = -1/4
+		exp = 3'h1; mant = 8'h80; fixnum_g = 15'h0100; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 13: exp = 3, mant = 12
+		exp = 3'h3; mant = 8'd048; fixnum_g = 15'h0180; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 14: exp = 4, mant = 11.5
+		exp = 3'h4; mant = 8'd046; fixnum_g = 15'h02e0; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 15: exp = 5, mant = -1.5
+		exp = 3'h5; mant = 8'hfa; fixnum_g = 15'h1f40; #10
+		$write("flonum=%h, fixnum=%h, fixnum_g=%h ",flonum, fixnum, fixnum_g);
+		if (fixnum == fixnum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		$display("----- All tests ended -----");
+		$finish;
+	end
+endmodule

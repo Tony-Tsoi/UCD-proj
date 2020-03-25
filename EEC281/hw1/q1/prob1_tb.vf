@@ -1,0 +1,8 @@
+test/prob1_tb.vt
+hdl/prob1.v
+hdl/cpa8.v
+hdl/csa8.v
+hdl/fa.v
+hdl/se4to8.v
+hdl/sm4to8.v
+hdl/u4to8.v

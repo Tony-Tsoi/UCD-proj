@@ -1,0 +1,66 @@
+module prob7_tb;
+	
+	reg [18:0] in;
+	wire signed [5:0] out;
+	
+	wire [4:0] num1s;
+	wire [4:0] num0s;
+	wire signed [5:0] out_g;
+	
+	assign num1s = in[18] + in[17] + in[16] + in[15] + in[14] + in[13] + in[12] + in[11]
+		+ in[10] + in[9] + in[8] + in[7] + in[6] + in[5] + in[4] + in[3] + in[2] + in[1] + in[0];
+	assign num0s = 19 - num1s;
+	assign out_g = num1s - num0s;
+	
+	integer count, r;
+	
+	prob7 T (.bstr(in), .out(out));
+	
+	initial begin
+		// Create dump file
+		$recordfile("prob7_tb");
+		$recordvars(prob7_tb);
+		
+		r = 916182; // random seed
+		
+		$display("----- Start Testing -----");
+		
+		// Test 1: All zeros
+		in = 19'h00000; #10
+		$write("in=%b, out=%d, out_g=%d ", in, out, out_g);
+		if (out == out_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test 2: All ones
+		in = 19'h7ffff; #10
+		$write("in=%b, out=%d, out_g=%d ", in, out, out_g);
+		if (out == out_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+			
+		// Test 3: 50/50
+		in = 19'h55555; #10
+		$write("in=%b, out=%d, out_g=%d ", in, out, out_g);
+		if (out == out_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test 4 to 15: Automatic test
+		for (count = 0; count <= 11; count = count + 1) begin
+			r = $random(r);
+			in = r[18:0]; #10
+			$write("in=%b, out=%d, out_g=%d ", in, out, out_g);
+			if (out == out_g)
+				$write("ok\n");
+			else
+				$write("Error!\n");
+		end
+		
+		$display("----- All tests ended -----");
+		$finish;
+	end
+endmodule

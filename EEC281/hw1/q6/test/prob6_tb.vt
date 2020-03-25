@@ -1,0 +1,261 @@
+module prob6_tb; 
+	
+	reg signed [3:0] a, b, c, d, e, f;
+	wire signed [5:0] s;
+	
+	wire signed [5:0] s_g;
+	assign s_g = a + b + c + d + e + f;
+	
+	prob6 T (.a(a), .b(b), .c(c), .d(d), .e(e), .f(f), .s(s));
+	
+	initial begin
+		// Create dump file
+		$recordfile("prob6_tb");
+		$recordvars(prob6_tb);
+		
+		$display("----- Start Testing -----");
+	
+		// Test Case 1: 0 + 0 + 0 + 0 + 0 + 0
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 2: 1 + 0 + 0 + 0 + 0 + 0
+		a = 4'h1; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 3: 0 + 1 + 0 + 0 + 0 + 0
+		a = 4'h0; b = 4'h1; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 4: 0 + 0 + 1 + 0 + 0 + 0
+		a = 4'h0; b = 4'h0; c = 4'h1; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 5: 0 + 0 + 0 + 1 + 0 + 0
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h1; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 6: 0 + 0 + 0 + 0 + 1 + 0
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h1; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 7: 0 + 0 + 0 + 0 + 0 + 1
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h1;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 8: -1 + 0 + 0 + 0 + 0 + 0
+		a = 4'hf; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 9: 0 + -1 + 0 + 0 + 0 + 0
+		a = 4'h0; b = 4'hf; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 10: 0 + 0 + -1 + 0 + 0 + 0
+		a = 4'h0; b = 4'h0; c = 4'hf; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 11: 0 + 0 + 0 + -1 + 0 + 0
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'hf; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 12: 0 + 0 + 0 + 0 + -1 + 0
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'hf; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 13: 0 + 0 + 0 + 0 + 0 + -1
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'hf;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 14: 7 + 0 + 0 + 0 + 0 + 0
+		a = 4'h7; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 15: 0 + 7 + 0 + 0 + 0 + 0
+		a = 4'h0; b = 4'h7; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 16: 0 + 0 + 7 + 0 + 0 + 0
+		a = 4'h0; b = 4'h0; c = 4'h7; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 17: 0 + 0 + 0 + 7 + 0 + 0
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h7; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 18: 0 + 0 + 0 + 0 + 7 + 0
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h7; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 19: 0 + 0 + 0 + 0 + 0 + 7
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h7;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 20: -8 + 0 + 0 + 0 + 0 + 0
+		a = 4'h8; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 21: 0 + -8 + 0 + 0 + 0 + 0
+		a = 4'h0; b = 4'h8; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 22: 0 + 0 + -8 + 0 + 0 + 0
+		a = 4'h0; b = 4'h0; c = 4'h8; d = 4'h0; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 23: 0 + 0 + 0 + -8 + 0 + 0
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h8; e = 4'h0; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 24: 0 + 0 + 0 + 0 + -8 + 0
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h8; f = 4'h0;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 25: 0 + 0 + 0 + 0 + 0 + -8
+		a = 4'h0; b = 4'h0; c = 4'h0; d = 4'h0; e = 4'h0; f = 4'h8;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 26: 1 + 1 + 1 + 1 + 1 + 1
+		a = 4'h1; b = 4'h1; c = 4'h1; d = 4'h1; e = 4'h1; f = 4'h1;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 27: -1 + -1 + -1 + -1 + -1 + -1
+		a = 4'hf; b = 4'hf; c = 4'hf; d = 4'hf; e = 4'hf; f = 4'hf;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 28: 1 + 2 + 3 + 4 + 5 + 6
+		a = 4'h1; b = 4'h2; c = 4'h3; d = 4'h4; e = 4'h5; f = 4'h6;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 29: 7 + 4 + 5 + 5 + 5 + 5
+		a = 4'h7; b = 4'h4; c = 4'h5; d = 4'h5; e = 4'h5; f = 4'h5;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 30: -7 + -5 + -5 + -5 + -5 + -5
+		a = 4'h9; b = 4'hb; c = 4'hb; d = 4'hb; e = 4'hb; f = 4'hb;	#10
+		$write("a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, s=%d, s_g=%d ",a, b, c, d, e, f, s, s_g);
+		if (s == s_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		$display("----- All tests ended -----");
+		$finish;
+	end
+endmodule

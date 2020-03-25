@@ -1,0 +1,138 @@
+module prob1_tb;
+	reg [3:0] a, b, c;
+	wire signed [7:0] sum;
+	reg signed [7:0] sum_g;
+	
+	prob1 T (.a(a), .b(b), .c(c), .sum(sum));
+	
+	initial begin
+		// Create dump file
+		$recordfile("prob1_tb");
+		$recordvars(prob1_tb);
+		
+		$display("----- Start Testing -----");
+	
+		// Test Case 1: 0 + 0 + 0
+		a = 4'h0; b = 4'h0; c = 4'h0; sum_g = 8'b00000_000; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 2: 0 + 0 + 1/4
+		a = 4'h0; b = 4'h0; c = 4'h1; sum_g = 8'b00000_010; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+			
+		// Test Case 3: 0 + 1/2 + 0
+		a = 4'h0; b = 4'h1; c = 4'h0; sum_g = 8'b00000_100; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 4: 1/8 + 0 + 0
+		a = 4'h1; b = 4'h0; c = 4'h0; sum_g = 8'b00000_001; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 5: -1/8 + 0 + 0
+		a = 4'hf; b = 4'h0; c = 4'h0; sum_g = 8'b11111_111; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 6: -1/8 + 1/2 + 0
+		a = 4'hf; b = 4'h1; c = 4'h0; sum_g = 8'b00000_011; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 7: -1/8 + 0 + 1/4
+		a = 4'hf; b = 4'h0; c = 4'h1; sum_g = 8'b00000_001; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 8: -1/8 + 0 + -1/4
+		a = 4'hf; b = 4'h0; c = 4'h9; sum_g = 8'b11111_101; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 9: -1 + 1 + 1
+		a = 4'h8; b = 4'h2; c = 4'h4; sum_g = 8'b00001_000; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 10: -1 + 0 + -1
+		a = 4'h8; b = 4'h0; c = 4'hc; sum_g = 8'b11110_000; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 11: -1/8 + 7.5 + -1.75
+		a = 4'hf; b = 4'hf; c = 4'hf; sum_g = 8'b00101_101; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 12: 0 + 0 + -1/4
+		a = 4'h0; b = 4'h0; c = 4'h9; sum_g = 8'b11111_110; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 13: 0.875 + 7.5 + 1.75
+		a = 4'h7; b = 4'hf; c = 4'h7; sum_g = 8'b01010_001; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 14: -1 + 0 + -1.75
+		a = 4'h8; b = 4'h0; c = 4'hf; sum_g = 8'b11101_010; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		// Test Case 15: 0.5 + 0.5 + 0.5
+		a = 4'h4; b = 4'h1; c = 4'h2; sum_g = 8'b00001_100; #10
+		$write("a=%d, b=%d, c=%d, sum=%d, sum_g=%d ", a, b, c, sum, sum_g);
+		if (sum == sum_g)
+			$write("ok\n");
+		else
+			$write("Error!\n");
+		
+		$display("----- All tests ended -----");
+		$finish;
+	end
+endmodule

@@ -1,0 +1,130 @@
+module prob2_tb;
+
+// Parameters
+parameter NCIO = 180; // Number of Cycles from Input to Output
+
+// I/O for DUT
+reg clk, start, reset;
+wire [4:0] im_addr;
+wire [551:0] im_data;
+wire [3:0] fi_addr;
+wire [263:0] fi_data;
+wire [3:0] wr_addr;
+wire [71:0] wr_data;
+wire wr_en;
+
+// For generating random number
+reg [31:0] r;
+reg [4:0] i, j;
+integer tboutf;
+
+prob2 DUT (.clk(clk), .start(start), .reset(reset), 
+	.im_addr(im_addr), .im_data(im_data), .fi_addr(fi_addr), .fi_data(fi_data), 
+	.wr_addr(wr_addr), .wr_data(wr_data), .wr_en(wr_en));
+
+// Image and Filter ROM
+reg [551:0] imageROM [0:22]; // 23 columns of 23 pixels of 24 bits per pixel
+reg [263:0] filterROM [0:10]; // 11 columns of 11 pixels of 24 bits per pixel
+reg [71:0] outRAM [0:15]; // 16 pixels of ? bits per pixel
+reg [551:0] imageData, imageData_new;
+reg [263:0] filterData, filterData_new;
+reg [71:0] outData;
+
+// clock period: #100
+reg clk_rst;
+always begin
+   if (clk_rst == 1'b1)
+      clk = #1 1'b0;
+   else
+      #50 clk = ~clk;
+end
+
+// Input ROM Logic
+assign im_data = imageROM[im_addr]; // asynchronous ROM
+assign fi_data = filterROM[fi_addr];
+
+// Output RAM Logic
+always @(posedge clk) begin
+	if (wr_en == 1'b1)
+		outRAM[wr_addr] <= #1 wr_data;
+end
+
+// Start Testing
+initial begin
+	// For Cadence tool
+	$recordfile("prob2_tb");
+	$recordvars(prob2_tb);
+	
+	r = 32'd0000000123; // Random seed
+	
+	$display("Initializing");
+	clk_rst = 1'b1;
+	#200; // wait for two cycles
+	clk_rst = 1'b0;
+	
+	// Generate Image ROM
+	for (i = 5'd00; i < 5'd23; i = i + 5'd01) begin
+		for (j = 5'd00; j < 5'd23; j = j + 5'd01) begin
+			r = $random(r); // get next random number
+			imageData = imageROM [i];
+			imageData_new = (imageData << 24) | {528'h0000000000, r[23:0]};
+			imageROM[i] = #10 imageData_new;
+		end
+	end
+	
+	// Generate Filter ROM
+	for (i = 5'd00; i < 5'd11; i = i + 5'd01) begin
+		for (j = 5'd00; j < 5'd11; j = j + 5'd01) begin
+			r = $random(r);
+			filterData = filterROM[i];
+			filterData_new = (filterData << 24) | {240'h00000000, r[23:0]};
+			filterROM[i] = #10 filterData_new;
+		end
+	end
+	
+	// Start Processor
+	$display("Starting Processor");
+	reset = 1'b1; start = 1'b0; @(posedge clk); #10
+	reset = 1'b0;  // reset the processor
+	@(posedge clk); start = 1'b1; #10
+	
+	// Wait for Processor to finish, stream output
+	repeat (NCIO) begin
+		@(posedge clk);
+		if (wr_en == 1'b1) begin
+			$write("Address = %d, Value=%h\n", wr_addr, wr_data);
+		end
+	end
+	
+	@(posedge clk) #10; // wait one cycle for output stream write to test bench memory
+	
+	// File for writing the inputs and outputs
+	tboutf = $fopen("prob2out.m", "w");
+	
+	// Write the inputs
+	$display("writing inputs");
+	for (i = 5'd00; i < 5'd23; i = i + 5'd01) begin
+		imageData = imageROM[i];
+		j = i + 5'h01;
+		$fwrite(tboutf, "imgROM(%d) = \"%b\"; \n", j, imageData);
+	end
+	for (i = 5'd00; i < 5'd11; i = i + 5'd01) begin
+		filterData = filterROM[i];
+		j = i + 5'h01;
+		$fwrite(tboutf, "filROM(%d) = \"%b\"; \n", j, filterData);
+	end
+	
+	// Write the outputs
+	$display("Writing outputs");
+	for (i = 5'd00; i < 5'd16; i = i + 5'd01) begin
+		outData = outRAM[i];
+		j = i + 5'h01;
+		$fwrite(tboutf, "outMem(%d) = \"%b\"; \n", j, outData);
+	end
+	
+	// Close simulation
+	$display("All inputs and outputs written to file");
+	$finish;
+end
+
+endmodule
