@@ -3,7 +3,7 @@ This is the repository for some of the works (labs, homeworks, projects) for the
 I expect myself to keep on updating and adding more coursework into it.
 
 ## Currently included works
-+ EEC264 - Estimation and Detection of Signals in Noise, Signal Detection and Estimation - Matlab
++ EEC264 - Estimation and Detection of Signals in Noise - Signal Detection and Estimation - Matlab
 + EEC265 - Principles of Digital Communications - Digital Communication - Matlab
 + EEC281 - VLSI Digital Signal Processing - Hardware Module Design - Verilog and Matlab
 + EEC286 - Introduction To Digital System Testing - Hardware Verification - Matlab
