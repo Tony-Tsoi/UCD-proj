@@ -3,8 +3,10 @@ This is the repository for some of the works (labs, homeworks, projects) for the
 I expect myself to keep on updating and adding more coursework into it.
 
 ## Currently included works
-+ EEC281 - VLSI Digital Signal Processing - Hardware Module Design, Verilog and Matlab
-+ EEC286 - Introduction To Digital System Testing - Hardware Verification and Matlab
++ EEC264 - Estimation and Detection of Signals in Noise - Signal Detection and Estimation - Matlab
++ EEC265 - Principles of Digital Communications - Digital Communication - Matlab
++ EEC281 - VLSI Digital Signal Processing - Hardware Module Design - Verilog and Matlab
++ EEC286 - Introduction To Digital System Testing - Hardware Verification - Matlab
 
 ## Works that are in other repositories
 + EEC181AB - Hardware Accelerated Chess Engine - Verilog
@@ -16,4 +18,4 @@ I expect myself to keep on updating and adding more coursework into it.
 It's best for you to ask your TA or professor for answers rather than searching on the internet. Use this repo as 
 a reference at your discretion. To anyone looking forward to plagarise, I've got two words for you: MOSS and SJA.
 
-###### Last Updated: 2020-06-25
+###### Last Updated: 2021-03-27
